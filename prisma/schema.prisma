@@ -29,8 +29,8 @@ model Portfolio {
 
 model Share {
   id         Int              @id @default(autoincrement())
-  symbol     String
-  price      Float
+  symbol     String           @db.VarChar(3)
+  price      Decimal          @db.Decimal(9, 2)
   portfolios PortfolioShare[]
 
   @@map("shares")
