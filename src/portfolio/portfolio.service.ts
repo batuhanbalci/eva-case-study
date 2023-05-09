@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { generateHttpException } from 'src/utils/error.util';
 import { CreatePortfolioDto } from './dto/portfolio.dto';
 
 @Injectable()
@@ -8,6 +9,13 @@ export class PortfolioService {
 
   async create(createPortfolioDto: CreatePortfolioDto) {
     try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: createPortfolioDto.userId },
+      });
+
+      if (user === null)
+        throw generateHttpException(HttpStatus.NOT_FOUND, 'User not found');
+
       const portfolio = await this.prisma.portfolio.create({
         data: createPortfolioDto,
       });
@@ -15,6 +23,7 @@ export class PortfolioService {
       return portfolio;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
@@ -25,6 +34,7 @@ export class PortfolioService {
       return portfolios;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
@@ -34,9 +44,16 @@ export class PortfolioService {
         where: { id },
       });
 
+      if (portfolio === null)
+        throw generateHttpException(
+          HttpStatus.NOT_FOUND,
+          'Portfolio not found',
+        );
+
       return portfolio;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 }
