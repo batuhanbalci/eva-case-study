@@ -8,52 +8,33 @@ export class PortfolioService {
   constructor(private prisma: PrismaService) {}
 
   async create(createPortfolioDto: CreatePortfolioDto) {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: createPortfolioDto.userId },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: { id: createPortfolioDto.userId },
+    });
 
-      if (user === null)
-        throw generateHttpException(HttpStatus.NOT_FOUND, 'User not found');
+    if (user === null)
+      throw generateHttpException(HttpStatus.NOT_FOUND, 'User not found');
 
-      const portfolio = await this.prisma.portfolio.create({
-        data: createPortfolioDto,
-      });
+    const portfolio = await this.prisma.portfolio.create({
+      data: createPortfolioDto,
+    });
 
-      return portfolio;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    return portfolio;
   }
 
   async findAll() {
-    try {
-      const portfolios = await this.prisma.portfolio.findMany();
-
-      return portfolios;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    return await this.prisma.portfolio.findMany();
   }
 
   async findOne(id: number) {
-    try {
-      const portfolio = await this.prisma.portfolio.findUnique({
-        where: { id },
-      });
+    const portfolio = await this.prisma.portfolio.findUnique({
+      where: { id },
+    });
 
-      if (portfolio === null)
-        throw generateHttpException(
-          HttpStatus.NOT_FOUND,
-          'Portfolio not found',
-        );
-
-      return portfolio;
-    } catch (error) {
-      console.error(error);
-      throw error;
+    if (portfolio === null) {
+      throw generateHttpException(HttpStatus.NOT_FOUND, 'Portfolio not found');
     }
+
+    return portfolio;
   }
 }
