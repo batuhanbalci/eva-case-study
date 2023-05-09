@@ -11,7 +11,7 @@ export enum PrismaErrorCode {
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaClientExceptionFilter extends BaseExceptionFilter {
-  private exceptionShortMessage(message: string): string {
+  private simplifyErrorMessage(message: string): string {
     const shortMessage = message.substring(message.indexOf('→'));
 
     return shortMessage
@@ -25,7 +25,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
 
     const ctx = host.switchToHttp();
     const response: Response = ctx.getResponse<Response>();
-    const message = this.exceptionShortMessage(exception.message);
+    const message = this.simplifyErrorMessage(exception.message);
 
     switch (exception.code) {
       case PrismaErrorCode.UniqueConstraintFailed: {
