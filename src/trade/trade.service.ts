@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { TransactionType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { generateHttpException } from 'src/utils/error.util';
 import { CreateTradeDto } from './dto/trade.dto';
@@ -41,24 +42,35 @@ export class TradeService {
       createTradeDto,
     );
 
-    const trade = await this.prisma.portfolioShare.upsert({
-      where: {
-        portfolioId_shareId: {
+    const [trade] = await this.prisma.$transaction([
+      this.prisma.portfolioShare.upsert({
+        where: {
+          portfolioId_shareId: {
+            portfolioId: portfolio.id,
+            shareId: share.id,
+          },
+        },
+        create: {
+          quantity: quantity,
           portfolioId: portfolio.id,
           shareId: share.id,
         },
-      },
-      create: {
-        quantity: quantity,
-        portfolioId: portfolio.id,
-        shareId: share.id,
-      },
-      update: {
-        quantity: {
-          increment: quantity,
+        update: {
+          quantity: {
+            increment: quantity,
+          },
         },
-      },
-    });
+      }),
+      this.prisma.transaction.create({
+        data: {
+          quantity: quantity,
+          portfolioId: portfolio.id,
+          shareId: share.id,
+          type: TransactionType.BUY,
+          price: share.price,
+        },
+      }),
+    ]);
 
     return {
       message: `Trade successful. ${quantity} shares bought for ${share.price}$ each`,
@@ -98,19 +110,30 @@ export class TradeService {
       );
     }
 
-    const trade = await this.prisma.portfolioShare.update({
-      where: {
-        portfolioId_shareId: {
+    const [trade] = await this.prisma.$transaction([
+      this.prisma.portfolioShare.update({
+        where: {
+          portfolioId_shareId: {
+            portfolioId: portfolio.id,
+            shareId: share.id,
+          },
+        },
+        data: {
+          quantity: {
+            decrement: quantity,
+          },
+        },
+      }),
+      this.prisma.transaction.create({
+        data: {
+          quantity: quantity,
           portfolioId: portfolio.id,
           shareId: share.id,
+          type: TransactionType.SELL,
+          price: share.price,
         },
-      },
-      data: {
-        quantity: {
-          decrement: quantity,
-        },
-      },
-    });
+      }),
+    ]);
 
     return {
       message: `Trade successful. ${quantity} shares sold for ${share.price}$ each`,
