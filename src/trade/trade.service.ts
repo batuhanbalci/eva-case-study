@@ -39,7 +39,31 @@ export class TradeService {
 
     const [share, portfolio] = await this.getPortfolioAndShare(createTradeDto);
 
-    return null;
+    const trade = await this.prisma.portfolioShare.upsert({
+      where: {
+        portfolioId_shareId: {
+          portfolioId: portfolioId,
+          shareId: share.id,
+        },
+      },
+      create: {
+        quantity: quantity,
+        portfolioId: portfolio.id,
+        shareId: share.id,
+      },
+      update: {
+        quantity: {
+          increment: quantity,
+        },
+      },
+    });
+
+    return {
+      message: 'Trade successful',
+      quantity: trade.quantity,
+      portfolio: portfolio,
+      share: share,
+    };
   }
 
   async sell(createTradeDto: CreateTradeDto) {
