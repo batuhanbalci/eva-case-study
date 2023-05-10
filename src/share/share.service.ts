@@ -32,6 +32,16 @@ export class ShareService {
   async updatePrice(id: number, createShareDto: UpdateShareDto) {
     const share = await this.findOne(id);
 
+    const hoursBetweenLastUpdate =
+      Math.abs(new Date().getTime() - share.updatedAt.getTime()) / 36e5;
+
+    if (hoursBetweenLastUpdate < 1) {
+      throw generateHttpException(
+        HttpStatus.BAD_REQUEST,
+        'You can only update the price once per hour',
+      );
+    }
+
     return await this.prisma.share.update({
       where: { id: share.id },
       data: createShareDto,
