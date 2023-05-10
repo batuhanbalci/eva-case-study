@@ -23,12 +23,38 @@ export class PortfolioService {
   }
 
   async findAll() {
-    return await this.prisma.portfolio.findMany();
+    return await this.prisma.portfolio.findMany({
+      include: {
+        shares: {
+          select: {
+            shareId: false,
+            portfolioId: false,
+            share: true,
+            quantity: true,
+          },
+        },
+      },
+    });
   }
 
   async findOne(id: number) {
     const portfolio = await this.prisma.portfolio.findUnique({
       where: { id },
+      select: {
+        shares: {
+          select: {
+            shareId: false,
+            portfolioId: false,
+            share: true,
+            quantity: true,
+          },
+        },
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
     });
 
     if (portfolio === null) {
