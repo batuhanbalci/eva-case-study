@@ -19,21 +19,23 @@ model User {
 }
 
 model Portfolio {
-  id     Int              @id @default(autoincrement())
-  userId Int              @map("user_id")
-  user   User             @relation(fields: [userId], references: [id])
-  shares PortfolioShare[]
+  id           Int              @id @default(autoincrement())
+  userId       Int              @map("user_id")
+  user         User             @relation(fields: [userId], references: [id])
+  shares       PortfolioShare[]
+  transactions Transaction[]
 
   @@map("portfolios")
 }
 
 model Share {
-  id         Int              @id @default(autoincrement())
-  symbol     String           @unique @db.VarChar(3)
-  price      Decimal          @db.Decimal(9, 2)
-  portfolios PortfolioShare[]
-  createdAt  DateTime         @default(now()) @map("created_at")
-  updatedAt  DateTime         @default(now()) @map("updated_at")
+  id           Int              @id @default(autoincrement())
+  symbol       String           @unique @db.VarChar(3)
+  price        Decimal          @db.Decimal(9, 2)
+  portfolios   PortfolioShare[]
+  transactions Transaction[]
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @default(now()) @map("updated_at")
 
   @@map("shares")
 }
@@ -47,4 +49,24 @@ model PortfolioShare {
 
   @@id([portfolioId, shareId])
   @@map("portfolio_share")
+}
+
+model Transaction {
+  id          Int             @id @default(autoincrement())
+  portfolioId Int             @map("user_id")
+  portfolio   Portfolio       @relation(fields: [portfolioId], references: [id])
+  shareId     Int             @map("share_id")
+  share       Share           @relation(fields: [shareId], references: [id])
+  quantity    Int
+  price       Decimal         @db.Decimal(9, 2)
+  type        TransactionType
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @default(now()) @map("updated_at")
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  BUY
+  SELL
 }
