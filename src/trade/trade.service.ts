@@ -35,14 +35,14 @@ export class TradeService {
   }
 
   async buy(createTradeDto: CreateTradeDto) {
-    const { portfolioId, symbol, quantity } = createTradeDto;
+    const { quantity } = createTradeDto;
 
     const [share, portfolio] = await this.getPortfolioAndShare(createTradeDto);
 
     const trade = await this.prisma.portfolioShare.upsert({
       where: {
         portfolioId_shareId: {
-          portfolioId: portfolioId,
+          portfolioId: portfolio.id,
           shareId: share.id,
         },
       },
@@ -67,10 +67,45 @@ export class TradeService {
   }
 
   async sell(createTradeDto: CreateTradeDto) {
-    const { portfolioId, symbol, quantity } = createTradeDto;
+    const { quantity } = createTradeDto;
 
     const [share, portfolio] = await this.getPortfolioAndShare(createTradeDto);
 
-    return null;
+    const portfolioShare = await this.prisma.portfolioShare.findUnique({
+      where: {
+        portfolioId_shareId: {
+          portfolioId: portfolio.id,
+          shareId: share.id,
+        },
+      },
+    });
+
+    if (portfolioShare.quantity < quantity) {
+      throw generateHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Insufficient quantity',
+      );
+    }
+
+    const trade = await this.prisma.portfolioShare.update({
+      where: {
+        portfolioId_shareId: {
+          portfolioId: portfolio.id,
+          shareId: share.id,
+        },
+      },
+      data: {
+        quantity: {
+          decrement: quantity,
+        },
+      },
+    });
+
+    return {
+      message: 'Trade successful',
+      quantity: trade.quantity,
+      portfolio: portfolio,
+      share: share,
+    };
   }
 }
