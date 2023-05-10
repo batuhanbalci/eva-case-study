@@ -31,13 +31,15 @@ export class TradeService {
       throw generateHttpException(HttpStatus.BAD_REQUEST, 'Invalid symbol');
     }
 
-    return [share, portfolio];
+    return { share, portfolio };
   }
 
   async buy(createTradeDto: CreateTradeDto) {
     const { quantity } = createTradeDto;
 
-    const [share, portfolio] = await this.getPortfolioAndShare(createTradeDto);
+    const { share, portfolio } = await this.getPortfolioAndShare(
+      createTradeDto,
+    );
 
     const trade = await this.prisma.portfolioShare.upsert({
       where: {
@@ -59,8 +61,8 @@ export class TradeService {
     });
 
     return {
-      message: 'Trade successful',
-      quantity: trade.quantity,
+      message: `Trade successful. ${quantity} shares bought for ${share.price}$ each`,
+      balance: trade.quantity,
       portfolio: portfolio,
       share: share,
     };
@@ -69,7 +71,9 @@ export class TradeService {
   async sell(createTradeDto: CreateTradeDto) {
     const { quantity } = createTradeDto;
 
-    const [share, portfolio] = await this.getPortfolioAndShare(createTradeDto);
+    const { share, portfolio } = await this.getPortfolioAndShare(
+      createTradeDto,
+    );
 
     const portfolioShare = await this.prisma.portfolioShare.findUnique({
       where: {
@@ -79,6 +83,13 @@ export class TradeService {
         },
       },
     });
+
+    if (portfolioShare === null) {
+      throw generateHttpException(
+        HttpStatus.BAD_REQUEST,
+        'Portfolio does not contain this share',
+      );
+    }
 
     if (portfolioShare.quantity < quantity) {
       throw generateHttpException(
@@ -102,8 +113,8 @@ export class TradeService {
     });
 
     return {
-      message: 'Trade successful',
-      quantity: trade.quantity,
+      message: `Trade successful. ${quantity} shares sold for ${share.price}$ each`,
+      balance: trade.quantity,
       portfolio: portfolio,
       share: share,
     };
