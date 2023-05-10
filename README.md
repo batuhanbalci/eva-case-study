@@ -1,73 +1,68 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Super Traders
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A simple Buy and Sell Shares Game
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Main Features
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Buy and Sell Shares
+  - Buying shares with valid portfolios
+  - Selling shares with valid portfolio and sufficient balance
+- User Module (Read and Create Users)
+  - A user can have multiple portfolios
+- Portfolio Module (Read and Create Portfolios)
+  - A porfolio keeps shares
+- Share Module (Read and Create Shares)
+  - Also a user can update share price on an hour basis
+- Logs (Application keeps all Buy and Sell operations)
 
 ## Installation
 
-```bash
-$ npm install
-```
-
-## Running the app
+Run locally eva-case-study
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+  npm install
+  npx prisma generate
+  npx prisma migrate dev
+  npx prisma db push
+  npm run start:dev
 ```
 
-## Test
+## Environment Variables
 
-```bash
-# unit tests
-$ npm run test
+To run this project, you will need to add the following environment variables to your .env file
 
-# e2e tests
-$ npm run test:e2e
+`DATABASE_URL`
 
-# test coverage
-$ npm run test:cov
+## API Reference
+
+#### Get all items
+
+```http
+  BUY /api/v1/trade/buy
 ```
+
+| Parameter     | Type     | Description                                 |
+| :------------ | :------- | :------------------------------------------ |
+| `symbol`      | `string` | **Required**. Share symbol                  |
+| `quantity`    | `number` | **Required**. Number of shares you will buy |
+| `portfolioId` | `number` | **Required**. Related Portfolio             |
+
+#### Get item
+
+```http
+  SELL /api/v1/trade/sell
+```
+
+| Parameter     | Type     | Description                                 |
+| :------------ | :------- | :------------------------------------------ |
+| `symbol`      | `string` | **Required**. Share symbol                  |
+| `quantity`    | `number` | **Required**. Number of shares you will buy |
+| `portfolioId` | `number` | **Required**. Related Portfolio             |
+
+#### Other Endpoint
+
+You can find other endpoint in `Postman Collection` file under `docs` folder.
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+For support, email fake@fake.com or join our Slack channel.
