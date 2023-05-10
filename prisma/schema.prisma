@@ -37,11 +37,12 @@ model Share {
 }
 
 model PortfolioShare {
-  id          Int       @id @default(autoincrement())
   portfolioId Int       @map("portfolio_id")
   portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
   shareId     Int       @map("share_id")
   share       Share     @relation(fields: [shareId], references: [id])
+  quantity    Int
 
+  @@id([portfolioId, shareId])
   @@map("portfolio_share")
 }
