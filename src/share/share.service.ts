@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { generateHttpException } from 'src/utils/error.util';
-import { CreateShareDto } from './dto/share.dto';
+import { CreateShareDto, UpdateShareDto } from './dto/share.dto';
 
 @Injectable()
 export class ShareService {
@@ -27,5 +27,14 @@ export class ShareService {
     }
 
     return share;
+  }
+
+  async updatePrice(id: number, createShareDto: UpdateShareDto) {
+    const share = await this.findOne(id);
+
+    return await this.prisma.share.update({
+      where: { id: share.id },
+      data: createShareDto,
+    });
   }
 }

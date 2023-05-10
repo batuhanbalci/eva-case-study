@@ -4,9 +4,10 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
-import { CreateShareDto } from './dto/share.dto';
+import { CreateShareDto, UpdateShareDto } from './dto/share.dto';
 import { ShareService } from './share.service';
 
 @Controller('share')
@@ -26,5 +27,13 @@ export class ShareController {
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.shareService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateShareDto: UpdateShareDto,
+  ) {
+    return this.shareService.updatePrice(id, updateShareDto);
   }
 }

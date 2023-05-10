@@ -20,3 +20,9 @@ export class CreateShareDto {
   @IsDecimal({ decimal_digits: '2' })
   readonly price: number;
 }
+
+export class UpdateShareDto {
+  @IsNotEmpty()
+  @IsDecimal({ decimal_digits: '2' })
+  readonly price: number;
+}
