@@ -62,7 +62,3 @@ To run this project, you will need to add the following environment variables to
 #### Other Endpoint
 
 You can find other endpoint in `Postman Collection` file under `docs` folder.
-
-## Support
-
-For support, email fake@fake.com or join our Slack channel.
