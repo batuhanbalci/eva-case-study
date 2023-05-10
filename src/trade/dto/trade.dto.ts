@@ -1,14 +1,16 @@
 import {
-  IsDecimal,
   IsNotEmpty,
+  IsNumber,
+  IsPositive,
   IsString,
   IsUppercase,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 import { SYMBOL_LENGTH } from 'src/common/constants';
 
-export class CreateShareDto {
+export class CreateTradeDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(SYMBOL_LENGTH)
@@ -17,6 +19,12 @@ export class CreateShareDto {
   readonly symbol: string;
 
   @IsNotEmpty()
-  @IsDecimal({ decimal_digits: '2' })
-  readonly price: number;
+  @IsNumber()
+  @IsPositive()
+  readonly quantity: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  readonly portfolioId: number;
 }

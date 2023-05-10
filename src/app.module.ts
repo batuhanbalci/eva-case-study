@@ -6,6 +6,7 @@ import { PortfolioModule } from './portfolio/portfolio.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { ShareModule } from './share/share.module';
+import { TradeModule } from './trade/trade.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ShareModule } from './share/share.module';
     UserModule,
     PortfolioModule,
     ShareModule,
+    TradeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
